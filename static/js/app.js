@@ -1,6 +1,10 @@
 (function () {
   const FAVORITES_STORAGE_KEY = "quiz-favorites:v1";
+  const THEME_STORAGE_KEY = "theme-preference:v1";
   const favoritesPageRoot = document.getElementById("favorites-page-root");
+  const themeSelects = Array.from(document.querySelectorAll("[data-theme-select]"));
+  const rootElement = document.documentElement;
+  const systemThemeQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
 
   function loadStoredJson(key, fallback) {
     try {
@@ -16,6 +20,69 @@
 
   function saveStoredJson(key, value) {
     window.localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function loadThemePreference() {
+    try {
+      const raw = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (raw === "light" || raw === "dark" || raw === "system") {
+        return raw;
+      }
+    } catch (error) {
+      return "system";
+    }
+    return "system";
+  }
+
+  function saveThemePreference(preference) {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, preference);
+    } catch (error) {}
+  }
+
+  function resolveTheme(preference) {
+    if (preference === "light" || preference === "dark") {
+      return preference;
+    }
+    return systemThemeQuery && systemThemeQuery.matches ? "dark" : "light";
+  }
+
+  function applyThemePreference(preference, persist) {
+    rootElement.dataset.themeMode = preference;
+    rootElement.dataset.theme = resolveTheme(preference);
+    themeSelects.forEach((select) => {
+      select.value = preference;
+    });
+    if (persist) {
+      saveThemePreference(preference);
+    }
+  }
+
+  function initThemeControls() {
+    const preference = loadThemePreference();
+    applyThemePreference(preference, false);
+
+    themeSelects.forEach((select) => {
+      select.addEventListener("change", () => {
+        applyThemePreference(select.value, true);
+      });
+    });
+
+    if (!systemThemeQuery) {
+      return;
+    }
+
+    const handleSystemThemeChange = () => {
+      if ((rootElement.dataset.themeMode || "system") === "system") {
+        applyThemePreference("system", false);
+      }
+    };
+
+    if (typeof systemThemeQuery.addEventListener === "function") {
+      systemThemeQuery.addEventListener("change", handleSystemThemeChange);
+    } else if (typeof systemThemeQuery.addListener === "function") {
+      systemThemeQuery.addListener(handleSystemThemeChange);
+    }
   }
 
   function loadFavoritesStore() {
@@ -718,6 +785,7 @@
 
   const chapterData = window.CHAPTER_DATA;
   const quizContext = window.QUIZ_CONTEXT;
+  initThemeControls();
   if (chapterData && quizContext && Array.isArray(chapterData.questions)) {
     initChapterPage(chapterData, quizContext);
   }
