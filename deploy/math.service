@@ -1,5 +1,5 @@
 [Unit]
-Description=Neumathe Quiz Flask Site
+Description=math Flask Site
 After=network.target
 
 [Service]

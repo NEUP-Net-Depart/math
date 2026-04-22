@@ -1,6 +1,6 @@
-# 东北大学机考题库刷题网站
+# math
 
-这是一个基于 Flask 的刷题网站，用来整理和浏览东北大学数学相关机考题库。
+这是一个基于 Flask 的数学刷题网站。
 
 题库来源是四个原始压缩包中的章节 HTML 文件：
 
@@ -85,7 +85,7 @@
 │   └── generated/assets/
 └── deploy/
     ├── Caddyfile.example
-    └── neumathe-quiz.service
+    └── math.service
 ```
 
 ## 本地部署教程
@@ -101,7 +101,7 @@
 先进入项目目录：
 
 ```bash
-cd neumathe_lite
+cd math
 ```
 
 创建虚拟环境并安装依赖：
@@ -188,20 +188,20 @@ python scripts/extract_questions.py
 
 仓库里提供了示例服务文件：
 
-- `deploy/neumathe-quiz.service`
+- `deploy/math.service`
 
 可按下面方式安装：
 
 ```bash
-sudo cp deploy/neumathe-quiz.service /etc/systemd/system/neumathe-quiz.service
+sudo cp deploy/math.service /etc/systemd/system/math.service
 sudo systemctl daemon-reload
-sudo systemctl enable --now neumathe-quiz
+sudo systemctl enable --now math
 ```
 
 查看状态：
 
 ```bash
-systemctl status neumathe-quiz
+systemctl status math
 ```
 
 ### 2. 使用 Caddy 反向代理
@@ -213,13 +213,11 @@ systemctl status neumathe-quiz
 示例：
 
 ```caddy
-mathe.kawwaii.de {
+example.com {
 	encode zstd gzip
 	reverse_proxy 127.0.0.1:5080
 }
 ```
-
-如果你已经把域名解析到服务器并且打开了 Cloudflare 代理，可以继续让 Caddy 在服务器本机处理证书和反代。
 
 ## 启动命令总结
 

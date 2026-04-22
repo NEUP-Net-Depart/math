@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Neumathe 刷题站{% endblock %}
+{% block title %}math{% endblock %}
 
 {% block content %}
 <main class="content home-page">
   <section class="home-stage">
     <div class="home-stage-copy">
-      <p class="eyebrow">Neumathe</p>
+      <p class="eyebrow">math</p>
       <h1>直接进科目开始刷题。</h1>
       <p class="hero-copy">
         四门科目、{{ subjects | map(attribute='chapter_count') | sum }} 个章节、{{ manifest.total_questions }} 道题，
